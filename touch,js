@@ -1,0 +1,202 @@
+// === CONTROLES TÁCTILES ESTILO FREE FIRE ===
+// Cargar DESPUÉS de main2.js (usa keys, cameraAngleX/Y, ghostEuler, camera, currentMode)
+(function () {
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (!isTouch) return;
+
+    document.getElementById('joystick-container').style.display = 'block';
+    document.getElementById('mobile-buttons').style.display = 'block';
+    document.getElementById('crosshair').style.display = 'none';
+    document.getElementById('mode-text').innerText = 'Modo actual: Avatar (3ª Persona)';
+
+    // ---------- Utilidades ----------
+    const tapKey = (code) => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { code }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code }));
+    };
+
+    const LOOK_SENS = 0.008;
+    function rotarCamara(dx, dy) {
+        if (typeof isFullscreenArt !== 'undefined' && isFullscreenArt) return;
+        if (currentMode === 'ghost') {
+            ghostEuler.y -= dx * LOOK_SENS * 0.6;
+            ghostEuler.x -= dy * LOOK_SENS * 0.6;
+            ghostEuler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, ghostEuler.x));
+            camera.quaternion.setFromEuler(ghostEuler);
+        } else {
+            cameraAngleY -= dx * LOOK_SENS;
+            cameraAngleX -= dy * LOOK_SENS;
+            cameraAngleX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraAngleX));
+        }
+    }
+
+    // ---------- Joystick (izquierda) ----------
+    const joyBox = document.getElementById('joystick-container');
+    const joyKnob = document.getElementById('joystick-knob');
+    let joyId = null;
+    const JOY_RADIUS = 45;
+
+    function resetJoystick() {
+        joyId = null;
+        joyKnob.style.transform = 'translate(0px, 0px)';
+        keys.W = keys.S = keys.A = keys.D = false;
+        keys.Shift = false;
+    }
+
+    function actualizarJoystick(t) {
+        const r = joyBox.getBoundingClientRect();
+        let dx = t.clientX - (r.left + r.width / 2);
+        let dy = t.clientY - (r.top + r.height / 2);
+        const dist = Math.hypot(dx, dy);
+        const max = Math.min(dist, JOY_RADIUS);
+        const nx = dist > 0 ? dx / dist : 0;
+        const ny = dist > 0 ? dy / dist : 0;
+        joyKnob.style.transform = `translate(${nx * max}px, ${ny * max}px)`;
+
+        const mag = max / JOY_RADIUS;
+        const dead = 0.3;
+        keys.W = ny < -dead && mag > 0.25;
+        keys.S = ny > dead && mag > 0.25;
+        keys.A = nx < -dead && mag > 0.25;
+        keys.D = nx > dead && mag > 0.25;
+        // Empujar al máximo = sprint (solo en modo avatar)
+        keys.Shift = currentMode === 'avatar' && mag > 0.92;
+    }
+
+    joyBox.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (joyId !== null) return;
+        const t = e.changedTouches[0];
+        joyId = t.identifier;
+        actualizarJoystick(t);
+    }, { passive: false });
+
+    // ---------- Cámara (arrastrar por la derecha) + disparo con arrastre ----------
+    const lookTouches = {}; // id -> {x, y}
+    let shootId = null;
+    let fireTimer = null;
+
+    function esUI(target) {
+        return target.closest && target.closest('#joystick-container, .m-btn, #mode-menu');
+    }
+
+    window.addEventListener('touchstart', (e) => {
+        for (const t of e.changedTouches) {
+            if (esUI(t.target)) continue;
+            if (t.clientX < window.innerWidth * 0.35) continue; // zona del joystick
+            lookTouches[t.identifier] = { x: t.clientX, y: t.clientY };
+        }
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        for (const t of e.changedTouches) {
+            if (t.identifier === joyId) {
+                actualizarJoystick(t);
+            } else if (lookTouches[t.identifier]) {
+                const p = lookTouches[t.identifier];
+                rotarCamara(t.clientX - p.x, t.clientY - p.y);
+                p.x = t.clientX; p.y = t.clientY;
+            }
+        }
+    }, { passive: false });
+
+    function finTouch(e) {
+        for (const t of e.changedTouches) {
+            if (t.identifier === joyId) resetJoystick();
+            delete lookTouches[t.identifier];
+        }
+    }
+    window.addEventListener('touchend', finTouch);
+    window.addEventListener('touchcancel', finTouch);
+
+    // ---------- Botones ----------
+    function bind(id, onDown, onUp) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            el.classList.add('pressed');
+            onDown && onDown(e);
+        }, { passive: false });
+        const up = (e) => {
+            el.classList.remove('pressed');
+            onUp && onUp(e);
+        };
+        el.addEventListener('touchend', up);
+        el.addEventListener('touchcancel', up);
+    }
+
+    // Saltar
+    bind('btn-jump', () => tapKey('Space'));
+
+    // Agacharse (alterna)
+    bind('btn-crouch', () => {
+        tapKey('KeyC');
+        document.getElementById('btn-crouch').classList.toggle('on', keys.C);
+    });
+
+    // Recargar
+    bind('btn-reload', () => tapKey('KeyR'));
+
+    // Usar / interactuar (E)
+    bind('btn-action', () => tapKey('KeyE'));
+
+    // Equipar / guardar arma (G)
+    bind('btn-weapon', () => {
+        tapKey('KeyG');
+        document.getElementById('btn-weapon').classList.toggle('on');
+    });
+
+    // Cambiar hombro de cámara (V)
+    bind('btn-side', () => tapKey('KeyV'));
+
+    // Mira de francotirador (alterna)
+    bind('btn-scope', () => {
+        const s = document.getElementById('sniper-scope');
+        const abierto = s.style.display === 'block';
+        s.style.display = abierto ? 'none' : 'block';
+        document.getElementById('btn-scope').classList.toggle('on', !abierto);
+    });
+
+    // Disparar: mantener = ráfaga, y arrastrar mientras disparas = apuntar
+    const disparar = () => window.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+    const shootBtn = document.getElementById('btn-shoot');
+    let shootPrev = null;
+
+    shootBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (shootId !== null) return;
+        const t = e.changedTouches[0];
+        shootId = t.identifier;
+        shootPrev = { x: t.clientX, y: t.clientY };
+        shootBtn.classList.add('pressed');
+        disparar();
+        fireTimer = setInterval(disparar, 180);
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+        for (const t of e.changedTouches) {
+            if (t.identifier === shootId && shootPrev) {
+                rotarCamara(t.clientX - shootPrev.x, t.clientY - shootPrev.y);
+                shootPrev.x = t.clientX; shootPrev.y = t.clientY;
+            }
+        }
+    }, { passive: false });
+
+    function soltarDisparo(e) {
+        for (const t of e.changedTouches) {
+            if (t.identifier === shootId) {
+                shootId = null;
+                shootPrev = null;
+                clearInterval(fireTimer);
+                shootBtn.classList.remove('pressed');
+            }
+        }
+    }
+    window.addEventListener('touchend', soltarDisparo);
+    window.addEventListener('touchcancel', soltarDisparo);
+
+    // Evita zoom/scroll del navegador mientras juegas
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+})();

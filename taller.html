@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galería de Aventura y Shooter 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="touch.css">
+</head>
+<body>
+
+    <div id="info">
+        <h3 style="margin:0 0 5px 0;">Modo Aventura 3D</h3>
+        <p id="mode-text" style="margin:0; font-size:13px; color:#4cd137;">Haz clic en la pantalla para jugar</p>
+    </div>
+
+    <!-- Menú superior para cambiar de modo -->
+    <div id="mode-menu">
+        <button id="btn-ghost" onclick="switchMode('ghost')">👻 Cámara Libre</button>
+        <button id="btn-avatar" class="active-btn" onclick="switchMode('avatar')">🚶‍♂️ Modo Avatar</button>
+    </div>
+
+    <!-- Controles táctiles para Celular (estilo Free Fire) -->
+    <div id="joystick-container">
+        <div id="joystick-knob"></div>
+    </div>
+    <div id="mobile-buttons">
+        <button class="m-btn" id="btn-shoot">💥</button>
+        <button class="m-btn" id="btn-jump">⬆️</button>
+        <button class="m-btn" id="btn-crouch">⬇️</button>
+        <button class="m-btn" id="btn-reload">🔄</button>
+        <button class="m-btn" id="btn-action">✋</button>
+        <button class="m-btn" id="btn-weapon">🔫</button>
+        <button class="m-btn" id="btn-scope">🎯</button>
+        <button class="m-btn" id="btn-side">↔️</button>
+    </div>
+
+    <!-- Miras de Shooter -->
+    <div id="crosshair"></div>
+    <div id="sniper-scope"></div>
+
+    <!-- Three.js y dependencias -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
+
+    <!-- Juego -->
+    <script src="main2.js"></script>
+    <!-- Controles táctiles (después de main2.js) -->
+    <script src="touch.js"></script>
+</body>
+</html>

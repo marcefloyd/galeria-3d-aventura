@@ -1,0 +1,66 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #111;
+    font-family: sans-serif;
+    touch-action: none;
+}
+
+#info {
+    position: absolute;
+    top: 15px; left: 15px; color: white;
+    background: rgba(0, 0, 0, 0.7); padding: 12px 20px;
+    border-radius: 8px; pointer-events: none; border-left: 4px solid #ff416c; z-index: 10;
+}
+
+#mode-menu {
+    position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; z-index: 10;
+}
+
+#mode-menu button {
+    background: rgba(0, 0, 0, 0.8); color: white; border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px;
+}
+
+#mode-menu button.active-btn { background: #ff416c; border-color: #ff416c; }
+
+/* Joystick y botones móviles (Se activan solos en celular) */
+#joystick-container {
+    position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px;
+    background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%; z-index: 10; display: none;
+}
+#joystick-knob {
+    position: absolute; top: 35px; left: 35px; width: 50px; height: 50px;
+    background: rgba(255, 255, 255, 0.5); border-radius: 50%; pointer-events: none;
+}
+
+#mobile-buttons {
+    position: absolute; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; z-index: 10; display: none;
+}
+.m-btn {
+    background: rgba(255,65,108,0.8); color: white; border: none; padding: 12px 20px;
+    border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer;
+}
+
+/* Mira clásica en el centro */
+#crosshair {
+    position: absolute; top: 50%; left: 50%; width: 10px; height: 10px;
+    border: 2px solid rgba(255,255,255,0.7); border-radius: 50%;
+    transform: translate(-50%, -50%); pointer-events: none; z-index: 5;
+}
+
+/* Modo Francotirador (Oculto por defecto, aparece con Clic Derecho) */
+#sniper-scope {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    border: 100px solid rgba(0,0,0,0.9); box-sizing: border-box;
+    pointer-events: none; z-index: 100; display: none;
+}
+#sniper-scope::after {
+    content: ''; position: absolute; top: 50%; left: 50%; width: 200px; height: 2px;
+    background: red; transform: translate(-50%, -50%);
+}
+#sniper-scope::before {
+    content: ''; position: absolute; top: 50%; left: 50%; width: 2px; height: 200px;
+    background: red; transform: translate(-50%, -50%);
+}

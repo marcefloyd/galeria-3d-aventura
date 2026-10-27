@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taller de Arte · Galería 3D</title>
+<meta name="theme-color" content="#020604">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Chakra+Petch:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ultra:#020604; --deep:#000; --ice:#c9ffe0; --pink:#ff2a6d; --mint:#00ff41; --cyan:#00f0ff; --panel:#06130c;
+  --display:'Orbitron','Arial Black',system-ui,sans-serif;
+  --body:'Chakra Petch',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--deep);color:var(--ice);line-height:1.55;font-size:1.0625rem}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+
+/* ---------- Hero: lienzo vivo ---------- */
+.hero{position:relative;min-height:100svh;background:var(--ultra);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:1.5rem clamp(1.25rem,5vw,4rem) clamp(2rem,6vh,4rem)}
+#canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
+.hero>*:not(#canvas){position:relative;z-index:1;pointer-events:none}
+.hero a,.hero button{pointer-events:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:1rem;font-weight:600}
+.top .logo{font-family:var(--display);font-weight:800;font-size:1rem;color:var(--mint);text-shadow:0 0 10px var(--mint)}
+.btn{display:inline-block;background:var(--pink);box-shadow:0 0 18px rgba(255,42,109,.55);color:#fff;text-decoration:none;font-weight:600;padding:.85rem 1.5rem;border-radius:999px;border:0;font-size:1rem;font-family:var(--body);cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{background:#ff5584;transform:translateY(-2px)}
+.btn.ghost{background:rgba(0,0,0,.5);box-shadow:none;border:2px solid var(--mint);color:var(--mint)}
+.btn.ghost:hover{background:var(--mint);color:#000}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,9vw,8rem);line-height:1;letter-spacing:-.02em;color:var(--mint);text-shadow:3px 0 var(--pink),-3px 0 var(--cyan),0 0 28px #000}
+.lead{text-shadow:0 0 12px #000;max-width:34ch;margin:1.5rem 0 1.75rem;font-size:1.2rem}
+.hint{font-size:.9rem;opacity:.75;margin-top:1.25rem}
+
+/* ---------- Disciplinas ---------- */
+.disc{background:var(--deep);padding:clamp(3rem,10vw,7rem) clamp(1.25rem,5vw,4rem)}
+.disc h2,.escape h2,.ctrl h2{color:var(--mint);font-family:var(--display);font-weight:500;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.02em;margin-bottom:.5rem}
+.disc p.sub{max-width:52ch;opacity:.8;margin-bottom:2rem}
+.rows{list-style:none;padding:0;border-top:1px solid var(--mint)}
+.rows button{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:1rem .25rem;border-bottom:1px solid var(--mint);cursor:pointer;font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,6.5vw,5rem);letter-spacing:-.03em;line-height:1.05;transition:padding .2s,color .2s,background .2s}
+.rows button span{font-family:var(--body);font-weight:400;font-size:1rem;letter-spacing:0;opacity:.7;text-align:right}
+.rows button:hover,.rows button:focus-visible,.rows button[aria-pressed=true]{color:#000;background:var(--mint);padding-left:1.25rem;box-shadow:0 0 24px rgba(0,255,65,.45)}
+.rows button:focus-visible{outline:3px solid var(--mint);outline-offset:-3px}
+
+/* ---------- Escape Art ---------- */
+.escape{background:var(--panel);color:var(--ice);border-top:1px solid var(--cyan);padding:clamp(3rem,10vw,7rem) clamp(1.25rem,5vw,4rem);display:grid;gap:3rem;grid-template-columns:1fr 1fr;align-items:center}
+.escape p{max-width:46ch;margin-top:1rem}
+.escape h2{font-size:clamp(1.8rem,4.5vw,3.4rem);font-weight:800;line-height:1.05}
+.lock{background:#000;color:var(--ice);border:1px solid var(--cyan);box-shadow:0 0 30px rgba(0,240,255,.25);border-radius:2rem 2rem 1rem 1rem;padding:2rem;text-align:center;max-width:380px;justify-self:center;width:100%}
+.dials{display:flex;gap:.75rem;justify-content:center;margin:1.25rem 0}
+.dial{width:4.2rem;height:5.5rem;border-radius:.75rem;border:1px solid var(--cyan);background:var(--ultra);color:var(--cyan);text-shadow:0 0 10px var(--cyan);font-family:var(--display);font-weight:800;font-size:2.2rem;cursor:pointer;transition:transform .1s}
+.dial:active{transform:scale(.94)}
+.lock.open{border-color:var(--mint);box-shadow:0 0 36px rgba(0,255,65,.45)}
+.lock.open .dial{background:var(--mint);color:#000;border-color:var(--mint);text-shadow:none}
+#lock-msg{min-height:3.2em;font-size:.95rem}
+#lock-go{display:none;margin-top:.75rem}
+.lock.open #lock-go{display:inline-block}
+
+/* ---------- Controles ---------- */
+.ctrl{background:var(--deep);padding:clamp(3rem,8vw,6rem) clamp(1.25rem,5vw,4rem)}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1.25rem 2rem;margin-top:1.75rem;list-style:none;padding:0}
+.keys li{display:flex;align-items:center;gap:.9rem}
+kbd{font-family:var(--display);font-weight:500;font-size:.85rem;min-width:2.6rem;text-align:center;padding:.5rem .6rem;border:1px solid var(--mint);color:var(--mint);border-bottom-width:4px;border-radius:.4rem}
+footer{background:var(--deep);border-top:1px solid var(--mint);padding:2rem clamp(1.25rem,5vw,4rem);font-size:.9rem;opacity:.8;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+
+@media (max-width:760px){
+  .escape{grid-template-columns:1fr}
+  .rows button span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <canvas id="canvas" aria-hidden="true"></canvas>
+  <div class="top">
+    <span class="logo">GALLERIA ESCAPE ART</span>
+    <a class="btn ghost" href="taller.html">Entrar</a>
+  </div>
+  <div>
+    <h1>Taller<br>de arte</h1>
+    <p class="lead">Mis obras de todo tipo, en una galería que se camina, se explora y pronto se escapa.</p>
+    <a class="btn" href="taller.html">Entrar a la galería</a>
+    <p class="hint">Mové el mouse o el dedo sobre el lienzo: pintás vos.</p>
+  </div>
+</header>
+
+<section class="disc" aria-labelledby="t-disc">
+  <h2 id="t-disc">Lo que vas a encontrar</h2>
+  <p class="sub">Cada disciplina tiene su propio pincel. Elegí una y probalo en el lienzo de arriba.</p>
+  <ul class="rows">
+    <li><button data-brush="pintura" aria-pressed="false">Pintura <span>trazo grueso, color que se mezcla</span></button></li>
+    <li><button data-brush="dibujo" aria-pressed="false">Dibujo <span>línea fina, un solo gesto</span></button></li>
+    <li><button data-brush="digital" aria-pressed="false">Arte digital <span>píxeles sobre una grilla</span></button></li>
+    <li><button data-brush="video" aria-pressed="false">Video <span>cuadros que se parten y se corren</span></button></li>
+  </ul>
+</section>
+
+<section class="escape" aria-labelledby="t-esc">
+  <div>
+    <h2 id="t-esc">Próximamente: escape art</h2>
+    <p>La galería va a tener salas cerradas, pistas escondidas en las obras y puertas que se abren con enigmas. Mientras la construyo, hay una cerradura de prueba: la pista está en la sala de pruebas.</p>
+  </div>
+  <div class="lock" id="lock">
+    <strong>Cerradura de prueba</strong>
+    <div class="dials" role="group" aria-label="Combinación de tres dígitos">
+      <button class="dial" aria-label="Dígito 1">0</button>
+      <button class="dial" aria-label="Dígito 2">0</button>
+      <button class="dial" aria-label="Dígito 3">0</button>
+    </div>
+    <p id="lock-msg" aria-live="polite">Tocá los números. Pista: un cuadro, una soga, un muro.</p>
+    <a class="btn" id="lock-go" href="taller.html">Pasar a la galería</a>
+  </div>
+</section>
+
+<section class="ctrl" aria-labelledby="t-ctrl">
+  <h2 id="t-ctrl">Cómo moverte adentro</h2>
+  <p style="opacity:.8">Hacé un clic en la pantalla para activar el mouse y listo.</p>
+  <ul class="keys">
+    <li><kbd>W A S D</kbd> Caminar</li>
+    <li><kbd>Shift</kbd> Correr</li>
+    <li><kbd>Espacio</kbd> Saltar</li>
+    <li><kbd>C</kbd> Agacharte</li>
+    <li><kbd>E</kbd> Usar: ver el cuadro o agarrar la soga</li>
+    <li><kbd>G</kbd> Sacar o guardar el rifle</li>
+    <li><kbd>R</kbd> Recargar</li>
+    <li><kbd>V</kbd> Cambiar el hombro de la cámara</li>
+  </ul>
+</section>
+
+<footer>
+  <span>© <span id="year"></span> Taller de arte</span>
+  <span>Hecho con Three.js y mucho café</span>
+</footer>
+
+<script>
+/* ---------- Lienzo generativo ---------- */
+(function(){
+  const cv=document.getElementById('canvas'), ctx=cv.getContext('2d');
+  const BG='#020604', reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W,H,dpr,brush='pintura',last=null,t=0,userActive=0,hue=0;
+
+  const BRUSHES={
+    pintura:{color:['#ff2a6d','#00f0ff','#b026ff'],w:28,fade:.03},
+    dibujo:{color:['#00f0ff'],w:2,fade:.03},
+    digital:{color:['#00ff41','#00f0ff','#ff2a6d'],w:18,fade:.05},
+    video:{color:['#ff2a6d','#00f0ff','#00ff41'],w:10,fade:.08}
+  };
+
+  function size(){
+    dpr=Math.min(devicePixelRatio||1,2);
+    W=cv.clientWidth;H=cv.clientHeight;
+    cv.width=W*dpr;cv.height=H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);
+    cols=Array.from({length:Math.ceil(W/FS)},()=>Math.random()*-40);
+    gw=Math.ceil(W/FS)+1;gh=Math.ceil(H/FS)+1;glow=new Float32Array(gw*gh);gcol=new Array(gw*gh);
+  }
+  const FS=16,GL='アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789';let cols=[],frame=0,gw=0,gh=0,glow=new Float32Array(0),gcol=[];
+  size();addEventListener('resize',size);
+
+  function pickColor(b){const c=BRUSHES[b].color;return c[Math.floor(hue)%c.length]}
+
+  // Aclara un color hex mezclándolo con blanco (para que las letras resalten sobre el trazo)
+  function tint(hex,a){
+    const n=parseInt(hex.slice(1),16),m=v=>Math.round(v+(255-v)*a);
+    return 'rgb('+m(n>>16)+','+m(n>>8&255)+','+m(n&255)+')';
+  }
+  // Ilumina la lluvia alrededor del pincel y deja letras del color del trazo
+  function lit(x,y,color){
+    const R=5,cx=Math.floor(x/FS),cy=Math.floor(y/FS);
+    ctx.font=FS+'px monospace';ctx.shadowColor=color;ctx.shadowBlur=12;ctx.fillStyle=tint(color,.55);
+    for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){
+      const gx=cx+dx,gy=cy+dy;
+      if(gx<0||gy<0||gx>=gw||gy>=gh)continue;
+      const d=Math.hypot(dx,dy);if(d>R)continue;
+      const k=gy*gw+gx,v=1-d/R;
+      if(v>glow[k]){glow[k]=v;gcol[k]=color}
+      if(d<R*.8&&Math.random()<.1)ctx.fillText(GL[Math.floor(Math.random()*GL.length)],gx*FS,(gy+1)*FS);
+    }
+    ctx.shadowBlur=0;
+  }
+  function stroke(x,y,px,py){paint(x,y,px,py);lit(x,y,pickColor(brush))}
+  function paint(x,y,px,py){
+    const b=BRUSHES[brush];
+    ctx.strokeStyle=ctx.fillStyle=pickColor(brush);
+    if(brush==='pintura'){
+      ctx.lineCap='round';ctx.lineWidth=b.w*(.5+Math.random()*.7);
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(x,y);ctx.stroke();
+    }else if(brush==='dibujo'){
+      ctx.lineCap='round';ctx.lineWidth=b.w;
+      ctx.beginPath();ctx.moveTo(px,py);
+      ctx.quadraticCurveTo((px+x)/2+(Math.random()-.5)*14,(py+y)/2+(Math.random()-.5)*14,x,y);ctx.stroke();
+    }else if(brush==='digital'){
+      const g=b.w;ctx.fillRect(Math.round(x/g)*g,Math.round(y/g)*g,g-2,g-2);
+    }else{ // video: tiras desplazadas
+      const h=6+Math.random()*18,off=(Math.random()-.5)*60;
+      ctx.fillRect(x-60+off,Math.round(y/h)*h,120+Math.random()*80,h*.6);
+    }
+  }
+
+  function move(x,y){
+    if(last){
+      const d=Math.hypot(x-last.x,y-last.y);
+      hue+=d*.01;
+      const n=Math.max(1,Math.floor(d/10));
+      for(let i=1;i<=n;i++){
+        const f=i/n;stroke(last.x+(x-last.x)*f,last.y+(y-last.y)*f,last.x,last.y);
+      }
+    }
+    last={x,y};userActive=performance.now();
+  }
+  function pos(e){const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
+  const hero=cv.parentElement;
+  hero.addEventListener('pointermove',e=>{const [x,y]=pos(e);move(x,y)});
+  hero.addEventListener('pointerleave',()=>{last=null});
+  hero.addEventListener('pointerdown',e=>{last=null;const [x,y]=pos(e);move(x,y)});
+
+  // Pintor automático: aparece sólo cuando nadie toca el lienzo
+  let ax=null,ay=null;
+  function loop(now){
+    ctx.globalAlpha=BRUSHES[brush].fade;ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
+    if(!reduce && ++frame%3===0){
+      ctx.font=FS+'px monospace';
+      for(let i=0;i<cols.length;i++){
+        const row=Math.floor(cols[i])-1,k=(row>=0&&row<gh)?row*gw+i:-1;
+        if(k>=0&&glow[k]>.05){
+          const c=gcol[k];
+          ctx.shadowColor=c;ctx.shadowBlur=14;ctx.fillStyle=tint(c,.45);
+          ctx.fillText(GL[Math.floor(Math.random()*GL.length)],i*FS,cols[i]*FS);
+          ctx.shadowBlur=0;
+        }else{
+          ctx.fillStyle=Math.random()<.03?'#d8ffe6':'rgba(0,255,65,.5)';
+          ctx.fillText(GL[Math.floor(Math.random()*GL.length)],i*FS,cols[i]*FS);
+        }
+        if(cols[i]*FS>H&&Math.random()>.975)cols[i]=0;
+        cols[i]++;
+      }
+      for(let k=0;k<glow.length;k++){if(glow[k]>0){glow[k]*=.94;if(glow[k]<.03)glow[k]=0}}
+    }
+    if(!reduce && now-userActive>1800){
+      t+=.012;
+      const x=W/2+Math.sin(t*1.3)*W*.38+Math.sin(t*3.1)*W*.05;
+      const y=H/2+Math.cos(t*.9)*H*.32+Math.cos(t*2.3)*H*.06;
+      if(ax!==null){hue+=.04;stroke(x,y,ax,ay)}
+      ax=x;ay=y;
+    }else{ax=null}
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Selector de pincel
+  document.querySelectorAll('[data-brush]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      brush=btn.dataset.brush;
+      document.querySelectorAll('[data-brush]').forEach(b=>b.setAttribute('aria-pressed',b===btn));
+      ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);
+      document.querySelector('.hero').scrollIntoView({behavior:reduce?'auto':'smooth'});
+    });
+  });
+})();
+
+/* ---------- Cerradura de prueba ---------- */
+(function(){
+  const CODE='111';
+  const lock=document.getElementById('lock'),msg=document.getElementById('lock-msg');
+  const dials=[...lock.querySelectorAll('.dial')];
+  dials.forEach(d=>d.addEventListener('click',()=>{
+    if(lock.classList.contains('open'))return;
+    d.textContent=(+d.textContent+1)%10;
+    const val=dials.map(x=>x.textContent).join('');
+    if(val===CODE){
+      lock.classList.add('open');
+      msg.textContent='¡Abierta! Así van a ser las puertas de las salas. Pasá a la galería.';
+    }else{
+      msg.textContent='Seguí probando.';
+    }
+  }));
+})();
+
+document.getElementById('year').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>

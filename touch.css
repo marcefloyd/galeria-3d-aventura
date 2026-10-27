@@ -1,0 +1,51 @@
+/* === CONTROLES TÁCTILES ESTILO FREE FIRE === (cargar después de style.css) */
+
+#joystick-container {
+    bottom: 40px; left: 40px; width: 130px; height: 130px;
+    touch-action: none;
+}
+#joystick-knob {
+    top: 40px; left: 40px; width: 50px; height: 50px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+/* Capa que cubre la pantalla; solo los botones reciben toques */
+#mobile-buttons {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: none; pointer-events: none; z-index: 10;
+}
+
+.m-btn {
+    position: absolute;
+    pointer-events: auto;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    color: #fff; font-size: 22px; line-height: 1;
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.m-btn.pressed { background: rgba(255, 65, 108, 0.85); transform: scale(0.92); }
+.m-btn.on { background: rgba(255, 65, 108, 0.6); border-color: #ff416c; }
+
+/* Disparo grande abajo a la derecha */
+#btn-shoot  { width: 96px; height: 96px; right: 35px; bottom: 35px; font-size: 38px;
+              background: rgba(255, 65, 108, 0.55); border-color: #ff416c; }
+/* Salto y agacharse alrededor del disparo */
+#btn-jump   { width: 66px; height: 66px; right: 45px;  bottom: 145px; }
+#btn-crouch { width: 58px; height: 58px; right: 140px; bottom: 120px; }
+#btn-reload { width: 54px; height: 54px; right: 145px; bottom: 35px; }
+/* Acciones secundarias, más arriba */
+#btn-action { width: 54px; height: 54px; right: 35px;  bottom: 230px; }
+#btn-weapon { width: 54px; height: 54px; right: 105px; bottom: 205px; }
+#btn-scope  { width: 54px; height: 54px; right: 175px; bottom: 185px; }
+#btn-side   { width: 46px; height: 46px; right: 20px;  top: 75px; font-size: 18px; }
+
+/* Los botones de modo arriba, más chicos en celu */
+@media (pointer: coarse) {
+    #mode-menu button { padding: 8px 12px; font-size: 12px; }
+    #info { padding: 8px 12px; }
+    #info h3 { font-size: 14px; }
+}
